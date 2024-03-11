@@ -15,7 +15,7 @@ $drivers = @(
     driverID = "$(pnputil /enum-devices /problem | Select-String 'VEN_8086')";
     driverRemote = "$networkSharePath\$gitRepoPath\files\desktop_drivers\Chipset.zip";
     sourceUnzipPath = "$driverTempPath\Chipset.zip";
-    destinationUnzipPath = "$driverTempPath\";
+    destinationUnzipPath = $driverTempPath;
     driverExe = "Chipset\SetupChipset.exe";
     installSwitches = "-s -norestart"
   }
