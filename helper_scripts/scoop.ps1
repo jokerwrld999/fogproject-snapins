@@ -7,11 +7,11 @@ param(
 )
 
 $networkSharePath = "\\10.2.252.13\All\Department\Sysadmins\Fog"
-$gitRepoPath = "$networkSharePath\github\fogproject-snapins"
+$gitRepoPath = "github\fogproject-snapins"
 $snapinScriptPath = "$networkSharePath\$gitRepoPath"
 
-net use $networkShare /user:$networkUser $networkPass
+net use $networkSharePath /user:$networkUser $networkPass
 
-powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\software\scoop_packages.ps1"
+powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\tasks\software\scoop_packages.ps1"
 
-net use $networkShare /delete
+net use $networkSharePath /delete

@@ -53,6 +53,6 @@ foreach ($driver in $drivers) {
   }
 }
 
-# if (Test-Path -Path $driver.driverExe) {
-#   Remove-Item -Path $driver.driverTempPath -Recurse -Force
-# }
+if (Test-Path -Path $driver.driverExe) {
+  Remove-Item -Path $driver.driverTempPath -Recurse -Force
+}
