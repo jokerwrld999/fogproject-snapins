@@ -26,7 +26,7 @@ if ([bool]((Get-WmiObject win32_VideoController).PNPDeviceID | Select-String "VE
   $currentNvidiaVersion = ($($getNvidiaVersion) | Select-String -Pattern '.{7}$').Matches.Value.Replace(".","").Insert(3,'.').Trim()
 
   if ($currentNvidiaVersion -lt $latestNvidiaVersion){
-    if (Test-Path -Path $driverTempPath) {
+    if (!Test-Path -Path $driverTempPath) {
       New-Item -Type Directory -Path $driverTempPath | Out-Null
     }
 
