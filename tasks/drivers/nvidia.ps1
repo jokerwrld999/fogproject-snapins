@@ -54,12 +54,13 @@ if ([bool]((Get-WmiObject win32_VideoController).PNPDeviceID | Select-String "VE
     $installSwitches = "-passive -noreboot -noeula -clean -s"
     Start-Process -FilePath $sourceUnzipPath -ArgumentList $installSwitches -Wait
 
-    # if (Test-Path -Path $driverTempPath) {
-    #   Remove-Item -Path $driverTempPath -Recurse -ErrorAction SilentlyContinue -Force
-    # }
+    if (Test-Path -Path $driverTempPath) {
+      Remove-Item -Path $driverTempPath -Recurse -ErrorAction SilentlyContinue -Force
+    }
     Write-Host "####### Nvidia Driver installed successfully. #######" -ForegroundColor Green
+  } else {
+    Write-Host "####### Nvidia Driver is already up to date. #######" -ForegroundColor Green
   }
-  Write-Host "####### Nvidia Driver is already up to date. #######" -ForegroundColor Green
 } else {
     Write-Host "####### There was no any Nvidia Card found. #######" -ForegroundColor DarkMagenta
 }
