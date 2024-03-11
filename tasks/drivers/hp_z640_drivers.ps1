@@ -48,7 +48,7 @@ if (!(Test-Path -Path $7zipExe) -and ![bool](Get-Command 7z -ErrorAction Silentl
 }
 
 foreach ($driver in $drivers) {
-  if ([bool]($driver.driverID) -and !(Test-Path -Path $intelRSTExe)) {
+  if (-not $driver.driverID -or !(Test-Path -Path $intelRSTExe)) {
     if (!(Test-Path -Path "$($driver.destinationUnzipPath)\$($driver.driverExe)")) {
       Write-Host "####### Downloading HP $($driver.Name) Driver... #######" -ForegroundColor Blue
       (New-Object System.Net.WebClient).DownloadFile($driver.driverRemote,$driver.sourceUnzipPath)
