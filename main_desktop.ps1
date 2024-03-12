@@ -15,5 +15,6 @@ net use $networkSharePath /user:$networkUser $networkPass
 powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\tasks\drivers\desktop_chipset_drivers.ps1" -networkSharePath $networkSharePath -gitRepoPath $gitRepoPath
 powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\tasks\drivers\nvidia.ps1"
 powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\tasks\software\scoop_packages.ps1"
+& ([ScriptBlock]::Create((irm https://massgrave.dev/get))) /HWID
 
 net use $networkSharePath /delete
