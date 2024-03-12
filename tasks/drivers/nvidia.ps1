@@ -55,7 +55,7 @@ if ([bool]((Get-WmiObject win32_VideoController).PNPDeviceID | Select-String "VE
     Start-Process -FilePath $sourceUnzipPath -ArgumentList $installSwitches -Wait
 
     if (Test-Path -Path $driverTempPath) {
-      Remove-Item -Path $driverTempPath -Recurse -ErrorAction SilentlyContinue -Force
+      Remove-Item -Path $driverTempPath -Recurse -Force | Out-Null
     }
     Write-Host "####### Nvidia Driver installed successfully. #######" -ForegroundColor Green
   } else {

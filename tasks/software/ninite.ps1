@@ -38,7 +38,7 @@ if (!(Test-Path -Path $niniteAppsInstalled)) {
 
   if ((Test-Path -Path $niniteTempPath)) {
     Write-Host "####### Cleaning $niniteTempPath... #######" -ForegroundColor Blue
-    Remove-Item -Path $niniteTempPath -Recurse -Force
+    Remove-Item -Path $niniteTempPath -Recurse -Force | Out-Null
   }
 } else {
   Write-Host "####### Ninite Apps has been already installed. #######" -ForegroundColor Green
