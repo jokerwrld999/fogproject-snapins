@@ -3,7 +3,11 @@ param(
   [Parameter(Mandatory = $true)]
   [string] $networkUser,
   [Parameter(Mandatory = $true)]
-  [string] $networkPass
+  [string] $networkPass,
+  [Parameter(Mandatory = $false)]
+  [string] $botToken,
+  [Parameter(Mandatory = $false)]
+  [string] $chatID
 )
 
 $networkSharePath = "\\10.2.252.13\All\Department\Sysadmins\Fog"
@@ -16,5 +20,6 @@ powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\tasks
 powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\tasks\drivers\nvidia.ps1"
 powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\tasks\software\scoop_packages.ps1"
 & ([ScriptBlock]::Create((irm https://massgrave.dev/get))) /HWID
+powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\files\helper_scripts\send_telegram_message.ps1" -botToken $botToken -chatID $chatID
 
 net use $networkSharePath /delete
