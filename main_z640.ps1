@@ -20,6 +20,6 @@ powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\tasks
 powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\tasks\drivers\nvidia.ps1"
 powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\tasks\software\scoop_packages.ps1"
 & ([ScriptBlock]::Create((irm https://massgrave.dev/get))) /HWID
-powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\files\helper_scripts\send_telegram_message.ps1" -botToken $botToken -chatID $chatID
+& ([ScriptBlock]::Create((irm "https://raw.githubusercontent.com/jokerwrld999/fogproject-snapins/main/files/helper_scripts/send_telegram_message.ps1"))) -botToken $botToken -chatID $chatID
 
 net use $networkSharePath /delete
