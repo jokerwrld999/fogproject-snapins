@@ -70,9 +70,9 @@ foreach ($item in $wallpaperItems) {
 Disable-UserInput | Out-Null
 Lock-Workstation | Out-Null
 
-if (Test-Path $warnWallRegistryPath) {
+if (Test-Path $wallpaperRegistryPath) {
   Start-Sleep 10
-  Remove-Item -Path $warnWallRegistryPath -Force | Out-Null
+  Remove-Item -Path $wallpaperRegistryPath -Force | Out-Null
   if (Test-Path -Path $wallpaperTempPath) {
     Remove-Item -Path $wallpaperTempPath -Recurse -Force | Out-Null
   }
