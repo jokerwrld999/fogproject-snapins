@@ -9,7 +9,7 @@ $getScheduledTaskName = (Get-ScheduledTask -TaskName $scheduledTaskName -ErrorAc
 function ScheduleTaskForNextBoot () {
   Write-Host "Scheduling task for next boot..." -ForegroundColor Blue
 
-  $ActionScript = '& {Invoke-Command -ScriptBlock ([scriptblock]::Create([System.Text.Encoding]::UTF8.GetString((New-Object Net.WebClient).DownloadData(''https://raw.githubusercontent.com/jokerwrld999/fogproject-snapins/main/tasks/system_setup/set_lockscreen_wallpaper.ps1''))))}'
+  $ActionScript = '& {Invoke-Command -ScriptBlock ([scriptblock]::Create([System.Text.Encoding]::UTF8.GetString((New-Object Net.WebClient).DownloadData(''https://raw.githubusercontent.com/jokerwrld999/fogproject-snapins/main/tasks/system_setup/set_lockscreen_wallpaper.ps1'')))) -WindowStyle hidden}'
 
   $Action = New-ScheduledTaskAction -Execute "PowerShell" -Argument "-NoExit -Command `"$ActionScript`""
 

@@ -47,7 +47,6 @@ function New-Registry {
 }
 
 if (!(Test-Path -Path $wallpaperSourcePath)) {
-  Write-Host "####### Downloading Ninite Apps... #######" -ForegroundColor Blue
   if (!(Test-Path -Path $wallpaperTempPath)) {
     New-Item -Path $wallpaperTempPath -ItemType Directory | Out-Null
   }
