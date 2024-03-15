@@ -3,7 +3,7 @@ Start-Transcript -Path C:\first_login.txt
 $scheduledTaskName = "SetLockscreenWallpaper"
 $getScheduledTaskName = (Get-ScheduledTask -TaskName $scheduledTaskName -ErrorAction SilentlyContinue).TaskName
 
-function ScheduleTaskForNextBoot ($scheduledTaskName) {
+function ScheduleTaskForNextBoot () {
   Write-Host "Scheduling task for next boot..." -ForegroundColor Blue
 
   $ActionScript = '& {Invoke-Command -ScriptBlock ([scriptblock]::Create([System.Text.Encoding]::UTF8.GetString((New-Object Net.WebClient).DownloadData(''https://raw.githubusercontent.com/jokerwrld999/fogproject-snapins/main/tasks/system_setup/set_lockscreen_wallpaper.ps1'')))) -ArgumentList -scheduledTaskName "SetLockscreenWallpaper"}'
@@ -15,16 +15,16 @@ function ScheduleTaskForNextBoot ($scheduledTaskName) {
   $currentUser = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
   $Principal = New-ScheduledTaskPrincipal -UserId $currentUser -RunLevel Highest
 
-  Register-ScheduledTask -TaskName "$scheduledTaskName" -Action $Action -Trigger $Trigger -Principal $Principal -Description "Continue Setting Up WSL After Boot"
+  Register-ScheduledTask -TaskName "SetLockscreenWallpaper" -Action $Action -Trigger $Trigger -Principal $Principal -Description "Continue Setting Up WSL After Boot"
 }
 
 Invoke-RestMethod "https://raw.githubusercontent.com/jokerwrld999/fogproject-snapins/main/tasks/system_setup/set_lockscreen_wallpaper.ps1" | Invoke-Expression
 
 if ($getScheduledTaskName -eq $scheduledTaskName) {
   Unregister-ScheduledTask -TaskName $scheduledTaskName -Confirm:$False -ErrorAction SilentlyContinue| Out-Null
-  ScheduleTaskForNextBoot "$scheduledTaskName"
+  ScheduleTaskForNextBoot
 } else {
-  ScheduleTaskForNextBoot "$scheduledTaskName"
+  ScheduleTaskForNextBoot
 }
 
 Stop-Transcript
