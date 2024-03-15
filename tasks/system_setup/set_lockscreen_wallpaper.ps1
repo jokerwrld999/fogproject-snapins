@@ -4,15 +4,9 @@ param(
   [string] $scheduledTaskName
 )
 
-Start-Transcript -Path C:\warn_script.txt
-
-Write-Host "hhahahah: $scheduledTaskName"
-
 if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit }
 
-$wallpaperTempPath = "C:\WarnTemp"
-$wallpaperRemotePath = "https://github.com/jokerwrld999/fogproject-snapins/raw/main/files/wallpapers/warnWall.png"
-$wallpaperSourcePath = "$wallpaperTempPath\warnWall.png"
+$wallpaperSourcePath = "C:\Windows\Setup\Scripts\wallpapers\warnWall.png"
 $wallpaperRegistryPath = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP'
 $getScheduledTaskName = (Get-ScheduledTask -TaskName $scheduledTaskName -ErrorAction SilentlyContinue).TaskName
 
@@ -56,12 +50,6 @@ function New-Registry {
   }
 }
 
-if (!(Test-Path -Path $wallpaperSourcePath)) {
-  if (!(Test-Path -Path $wallpaperTempPath)) {
-    New-Item -Path $wallpaperTempPath -ItemType Directory | Out-Null
-  }
-  Invoke-WebRequest -Uri $wallpaperRemotePath -OutFile $wallpaperSourcePath
-}
 
 $wallpaperItems = @(
   @{
@@ -80,14 +68,10 @@ Disable-UserInput | Out-Null
 Lock-Workstation | Out-Null
 
 if (Test-Path $wallpaperRegistryPath) {
-  Start-Sleep 10
+  Start-Sleep 5
   Remove-Item -Path $wallpaperRegistryPath -Force | Out-Null
-  if (Test-Path -Path $wallpaperTempPath) {
-    Remove-Item -Path $wallpaperTempPath -Recurse -Force | Out-Null
-  }
 }
 
 if ($getScheduledTaskName -eq $scheduledTaskName) {
   Unregister-ScheduledTask -TaskName $scheduledTaskName -Confirm:$False -ErrorAction SilentlyContinue | Out-Null
 }
-Stop-Transcript
