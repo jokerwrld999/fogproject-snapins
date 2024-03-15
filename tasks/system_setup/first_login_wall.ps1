@@ -12,7 +12,7 @@ function ScheduleTaskForNextBoot () {
 
   $Trigger = New-ScheduledTaskTrigger -AtLogon
 
-  $currentUser = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
+  $currentUser = "$(hostname)\User"
   $Principal = New-ScheduledTaskPrincipal -UserId $currentUser -RunLevel Highest
 
   Register-ScheduledTask -TaskName "SetLockscreenWallpaper" -Action $Action -Trigger $Trigger -Principal $Principal -Description "Set Lockscreen Warning"

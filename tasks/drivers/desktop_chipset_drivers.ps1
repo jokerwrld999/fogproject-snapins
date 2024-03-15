@@ -18,6 +18,14 @@ $drivers = @(
     destinationUnzipPath = $driverTempPath;
     driverExe = "Chipset\SetupChipset.exe";
     installSwitches = "-s -norestart"
+  },
+  @{ Name = "Intel Serial IO";
+    driverID = "$(pnputil /enum-devices /problem | Select-String 'VEN_8086&DEV_43E9')";
+    driverRemote = "$networkSharePath\$gitRepoPath\files\desktop_drivers\IOserial.zip";
+    sourceUnzipPath = "$driverTempPath\IOserial.zip";
+    destinationUnzipPath = $driverTempPath;
+    driverExe = "Chipset\AsusSetup.exe";
+    installSwitches = "-s -norestart"
   }
 )
 
