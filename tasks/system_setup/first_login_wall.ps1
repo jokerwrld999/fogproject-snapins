@@ -1,8 +1,4 @@
 Start-Transcript -Path C:\first_login.txt
-$ExecutionPolicy = Get-ExecutionPolicy -Scope LocalMachine
-if ($ExecutionPolicy -ne "RemoteSigned") {
-  Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine -Force
-}
 
 $scheduledTaskName = "SetLockscreenWallpaper"
 $getScheduledTaskName = (Get-ScheduledTask -TaskName $scheduledTaskName -ErrorAction SilentlyContinue).TaskName
