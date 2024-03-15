@@ -77,8 +77,8 @@ foreach ($item in $wallpaperItems) {
   New-Registry @item
 }
 
-#Disable-UserInput | Out-Null
-# Lock-Workstation | Out-Null
+Disable-UserInput | Out-Null
+Lock-Workstation | Out-Null
 
 if (Test-Path $wallpaperRegistryPath) {
   Start-Sleep 10
