@@ -7,7 +7,9 @@ function ScheduleTaskForNextBoot () {
   # param ($scheduledTaskName)
   Write-Host "Scheduling task $scheduledTaskName for next boot..." -ForegroundColor Blue
 
-  $ActionScript = '& {Invoke-Command -ScriptBlock ([scriptblock]::Create([System.Text.Encoding]::UTF8.GetString((New-Object Net.WebClient).DownloadData(''https://raw.githubusercontent.com/jokerwrld999/fogproject-snapins/main/tasks/system_setup/set_lockscreen_wallpaper.ps1''))))}'
+  # $ActionScript = '& {Invoke-Command -ScriptBlock ([scriptblock]::Create([System.Text.Encoding]::UTF8.GetString((New-Object Net.WebClient).DownloadData(''https://raw.githubusercontent.com/jokerwrld999/fogproject-snapins/main/tasks/system_setup/set_lockscreen_wallpaper.ps1''))))}'
+
+  $ActionScript = "& ([ScriptBlock]::Create((irm https://raw.githubusercontent.com/jokerwrld999/fogproject-snapins/main/tasks/system_setup/set_lockscreen_wallpaper.ps1))) -scheduledTaskName $scheduledTaskName"
 
   $Action = New-ScheduledTaskAction -Execute "PowerShell" -Argument "-NoExit -ExecutionPolicy Bypass -NoProfile -Command `"$ActionScript`" -ArgumentList -scheduledTaskName `"$scheduledTaskName`" -WindowStyle hidden"
 
