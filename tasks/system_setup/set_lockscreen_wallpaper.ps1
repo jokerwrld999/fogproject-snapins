@@ -6,8 +6,6 @@ param(
 
 Start-Transcript -Path C:\warn_script.txt
 
-Write-Host "Heheheh your task is $scheduledTaskName"
-
 if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit }
 
 $wallpaperTempPath = "C:\WarnTemp"
