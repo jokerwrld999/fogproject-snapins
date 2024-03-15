@@ -4,9 +4,7 @@ $scheduledTaskName = "SetLockscreenWallpaper"
 $getScheduledTaskName = (Get-ScheduledTask -TaskName $scheduledTaskName -ErrorAction SilentlyContinue).TaskName
 
 function ScheduleTaskForNextBoot () {
-  param (
-        [string]$scheduledTaskName
-  )
+  param ($scheduledTaskName)
   Write-Host "Scheduling task $scheduledTaskName for next boot..." -ForegroundColor Blue
 
   $ActionScript = '& {Invoke-Command -ScriptBlock ([scriptblock]::Create([System.Text.Encoding]::UTF8.GetString((New-Object Net.WebClient).DownloadData(''https://raw.githubusercontent.com/jokerwrld999/fogproject-snapins/main/tasks/system_setup/set_lockscreen_wallpaper.ps1''))))}'
