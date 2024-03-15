@@ -3,7 +3,10 @@ Start-Transcript -Path C:\first_login.txt
 $scheduledTaskName = "SetLockscreenWallpaper"
 $getScheduledTaskName = (Get-ScheduledTask -TaskName $scheduledTaskName -ErrorAction SilentlyContinue).TaskName
 
-function ScheduleTaskForNextBoot ($scheduledTaskName) {
+function ScheduleTaskForNextBoot () {
+  param (
+        [string]$scheduledTaskName
+  )
   Write-Host "Scheduling task $scheduledTaskName for next boot..." -ForegroundColor Blue
 
   $ActionScript = '& {Invoke-Command -ScriptBlock ([scriptblock]::Create([System.Text.Encoding]::UTF8.GetString((New-Object Net.WebClient).DownloadData(''https://raw.githubusercontent.com/jokerwrld999/fogproject-snapins/main/tasks/system_setup/set_lockscreen_wallpaper.ps1''))))}'
@@ -22,9 +25,9 @@ Invoke-RestMethod "https://raw.githubusercontent.com/jokerwrld999/fogproject-sna
 
 if ($getScheduledTaskName -eq $scheduledTaskName) {
   Unregister-ScheduledTask -TaskName $scheduledTaskName -Confirm:$False -ErrorAction SilentlyContinue| Out-Null
-  ScheduleTaskForNextBoot $scheduledTaskName
+  ScheduleTaskForNextBoot -scheduledTaskName $scheduledTaskName
 } else {
-  ScheduleTaskForNextBoot $scheduledTaskName
+  ScheduleTaskForNextBoot -scheduledTaskName $scheduledTaskName
 }
 
 Stop-Transcript
