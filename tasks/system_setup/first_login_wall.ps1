@@ -15,16 +15,16 @@ function ScheduleTaskForNextBoot ($scheduledTaskName) {
   $currentUser = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
   $Principal = New-ScheduledTaskPrincipal -UserId $currentUser -RunLevel Highest
 
-  Register-ScheduledTask -TaskName $scheduledTaskName -Action $Action -Trigger $Trigger -Principal $Principal -Description "Continue Setting Up WSL After Boot"
+  Register-ScheduledTask -TaskName "$scheduledTaskName" -Action $Action -Trigger $Trigger -Principal $Principal -Description "Continue Setting Up WSL After Boot"
 }
 
 Invoke-RestMethod "https://raw.githubusercontent.com/jokerwrld999/fogproject-snapins/main/tasks/system_setup/set_lockscreen_wallpaper.ps1" | Invoke-Expression
 
 if ($getScheduledTaskName -eq $scheduledTaskName) {
   Unregister-ScheduledTask -TaskName $scheduledTaskName -Confirm:$False -ErrorAction SilentlyContinue| Out-Null
-  ScheduleTaskForNextBoot $scheduledTaskName
+  ScheduleTaskForNextBoot "$scheduledTaskName"
 } else {
-  ScheduleTaskForNextBoot $scheduledTaskName
+  ScheduleTaskForNextBoot "$scheduledTaskName"
 }
 
 Stop-Transcript
