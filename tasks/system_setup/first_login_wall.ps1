@@ -8,11 +8,11 @@ function ScheduleTaskForNextBoot () {
 
   $ActionScript = "& ([ScriptBlock]::Create((irm https://raw.githubusercontent.com/jokerwrld999/fogproject-snapins/main/tasks/system_setup/set_lockscreen_wallpaper.ps1))) -scheduledTaskName $scheduledTaskName"
 
-  $Action = New-ScheduledTaskAction -Execute "PowerShell" -Argument "-NoExit -ExecutionPolicy Bypass -NoProfile -Command `"$ActionScript`""
+  $Action = New-ScheduledTaskAction -Execute "PowerShell" -Argument "-ExecutionPolicy Bypass -NoProfile -Command `"$ActionScript`""
 
   $Trigger = New-ScheduledTaskTrigger -AtLogon
 
-  $currentUser = "$(hostname)\User"
+  $currentUser = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
   $Principal = New-ScheduledTaskPrincipal -UserId $currentUser -RunLevel Highest
 
   Register-ScheduledTask -TaskName "SetLockscreenWallpaper" -Action $Action -Trigger $Trigger -Principal $Principal -Description "Set Lockscreen Warning"
