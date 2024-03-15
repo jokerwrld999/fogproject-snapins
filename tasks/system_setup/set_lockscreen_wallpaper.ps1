@@ -1,10 +1,16 @@
+[CmdletBinding()]
+param(
+  [Parameter(Mandatory = $false)]
+  [string] $scheduledTaskName
+)
+
 if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit }
 
 $wallpaperTempPath = "C:\WarnTemp"
 $wallpaperRemotePath = "https://github.com/jokerwrld999/fogproject-snapins/raw/main/files/wallpapers/warnWall.png"
 $wallpaperSourcePath = "$wallpaperTempPath\warnWall.png"
 $wallpaperRegistryPath = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP'
-$scheduledTaskName = "SetLockscreenWallpaper"
+# $scheduledTaskName = "SetLockscreenWallpaper"
 $getScheduledTaskName = (Get-ScheduledTask -TaskName $scheduledTaskName -ErrorAction SilentlyContinue).TaskName
 
 $lockWorkstation = Add-Type -Name "Win32LockWorkStation" -PassThru -MemberDefinition @"
