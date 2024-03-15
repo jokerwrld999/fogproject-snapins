@@ -4,6 +4,8 @@ param(
   [string] $scheduledTaskName
 )
 
+Start-Transcript -Path C:\warn_script.txt
+
 if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit }
 
 $wallpaperTempPath = "C:\WarnTemp"
@@ -87,3 +89,4 @@ if (Test-Path $wallpaperRegistryPath) {
 if ($getScheduledTaskName -eq $scheduledTaskName) {
   Unregister-ScheduledTask -TaskName $scheduledTaskName -Confirm:$False -ErrorAction SilentlyContinue | Out-Null
 }
+Stop-Transcript
