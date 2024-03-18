@@ -28,7 +28,7 @@ $blockInput = Add-Type -Name "UserInput" -PassThru -MemberDefinition @"
 "@
 
 function Disable-UserInput {
-  & $blockInput::BlockInput($true)
+  Start-Process Powershell.exe $blockInput::BlockInput($true) -WindowStyle Hidden -Wait | Out-Null
 }
 
 function New-Registry {
