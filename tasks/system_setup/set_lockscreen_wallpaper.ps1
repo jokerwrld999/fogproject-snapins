@@ -16,33 +16,19 @@ $lockWorkstation = Add-Type -Name "Win32LockWorkStation" -PassThru -MemberDefini
 "@
 
 function Lock-Workstation {
+  Start-Sleep 3
   if ( $lockWorkstation::LockWorkStation() -eq 0 ) {
       throw 'Failed to lock workstation'
   }
 }
 
-# $blockInput = Add-Type -Name "UserInput" -PassThru -MemberDefinition @"
-#   [DllImport("user32.dll")]
-#   public static extern bool BlockInput(bool fBlockIt);
-# "@
+$blockInput = Add-Type -Name "UserInput" -PassThru -MemberDefinition @"
+  [DllImport("user32.dll")]
+  public static extern bool BlockInput(bool fBlockIt);
+"@
 
 function UserInput {
-  param(
-    [Parameter(Mandatory = $true)]
-    [string]$Action
-  )
-
-  if ($action -eq "Enable") {
-    Get-PnpDevice -FriendlyName "*Mouse*" | ForEach-Object { Enable-PnpDevice -InputObject $_ -Confirm:$false -ErrorAction SilentlyContinue }
-    Get-PnpDevice -FriendlyName "*Keyboard*" | ForEach-Object { Enable-PnpDevice -InputObject $_ -Confirm:$false -ErrorAction SilentlyContinue }
-  }
-  elseif ($action -eq "Disable") {
-    Get-PnpDevice -FriendlyName "*Mouse*" | ForEach-Object { Disable-PnpDevice -InputObject $_ -Confirm:$false -ErrorAction SilentlyContinue }
-    Get-PnpDevice -FriendlyName "*Keyboard*" | ForEach-Object { Disable-PnpDevice -InputObject $_ -Confirm:$false -ErrorAction SilentlyContinue }
-  } else {
-    Write-Host "PnP Action is unknown. Please try to use `Enable` or `Disable` switches." -ForegroundColor DarkMagenta
-  }
-  # $blockInput::BlockInput($true)
+  & $blockInput::BlockInput($true)
 }
 
 function New-Registry {
@@ -81,7 +67,7 @@ foreach ($item in $wallpaperItems) {
   New-Registry @item
 }
 
-UserInput -Action "Disable" | Out-Null
+Disable-UserInput | Out-Null
 Lock-Workstation | Out-Null
 
 if ([bool]$scheduledTaskName -and ($getScheduledTaskName -eq $scheduledTaskName)) {
@@ -90,5 +76,4 @@ if ([bool]$scheduledTaskName -and ($getScheduledTaskName -eq $scheduledTaskName)
     # Start-Sleep 5
     Remove-Item -Path $wallpaperRegistryPath -Force | Out-Null
   }
-  UserInput -Action "Enable" | Out-Null
 }
