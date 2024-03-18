@@ -24,13 +24,11 @@ function Lock-Workstation {
 
 function Disable-UserInput {
   $jobName = "BlockUserInput"
-  Start-Job -Name $jobName -ScriptBlock {
     $blockInput = Add-Type -Name "UserInput" -PassThru -MemberDefinition @"
     [DllImport("user32.dll")]
-      public static extern bool BlockInput(bool fBlockIt);
+    public static extern bool BlockInput(bool fBlockIt);
 "@
-    Start-Process Powershell.exe $blockInput::BlockInput($true) -WindowStyle Hidden -Wait | Out-Null
-  } | Out-Null
+    $blockInput::BlockInput($true)
 }
 
 function New-Registry {

