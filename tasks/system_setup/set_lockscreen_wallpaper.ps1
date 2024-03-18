@@ -71,7 +71,7 @@ Lock-Workstation | Out-Null
 
 if (Test-Path $wallpaperRegistryPath) {
   # Start-Sleep 5
-  Remove-Item -Path $wallpaperRegistryPath -Force | Out-Null
+  # Remove-Item -Path $wallpaperRegistryPath -Force | Out-Null
 }
 
 if ($getScheduledTaskName -eq $scheduledTaskName) {
