@@ -21,13 +21,28 @@ function Lock-Workstation {
   }
 }
 
-$blockInput = Add-Type -Name "UserInput" -PassThru -MemberDefinition @"
-  [DllImport("user32.dll")]
-  public static extern bool BlockInput(bool fBlockIt);
-"@
+# $blockInput = Add-Type -Name "UserInput" -PassThru -MemberDefinition @"
+#   [DllImport("user32.dll")]
+#   public static extern bool BlockInput(bool fBlockIt);
+# "@
 
-function Disable-UserInput {
-  $blockInput::BlockInput($true)
+function UserInput {
+  param(
+    [Parameter(Mandatory = $true)]
+    [string]$Action
+  )
+
+  if ($action -eq "Enable") {
+    Get-PnpDevice -FriendlyName "*Mouse*" | ForEach-Object { Enable-PnpDevice -InputObject $_ -Confirm:$false -ErrorAction SilentlyContinue }
+    Get-PnpDevice -FriendlyName "*Keyboard*" | ForEach-Object { Enable-PnpDevice -InputObject $_ -Confirm:$false -ErrorAction SilentlyContinue }
+  }
+  elseif ($action -eq "Disable") {
+    Get-PnpDevice -FriendlyName "*Mouse*" | ForEach-Object { Disable-PnpDevice -InputObject $_ -Confirm:$false -ErrorAction SilentlyContinue }
+    Get-PnpDevice -FriendlyName "*Keyboard*" | ForEach-Object { Disable-PnpDevice -InputObject $_ -Confirm:$false -ErrorAction SilentlyContinue }
+  } else {
+    Write-Host "PnP Action is unknown. Please try to use `Enable` or `Disable` switches." -ForegroundColor DarkMagenta
+  }
+  # $blockInput::BlockInput($true)
 }
 
 function New-Registry {
@@ -66,13 +81,14 @@ foreach ($item in $wallpaperItems) {
   New-Registry @item
 }
 
-Disable-UserInput | Out-Null
+UserInput -Action "Disable" | Out-Null
 Lock-Workstation | Out-Null
 
-if ([bool]$scheduledTaskName -and $getScheduledTaskName -eq $scheduledTaskName) {
+if ([bool]$scheduledTaskName -and ($getScheduledTaskName -eq $scheduledTaskName)) {
   Unregister-ScheduledTask -TaskName $scheduledTaskName -Confirm:$False -ErrorAction SilentlyContinue | Out-Null
   if (Test-Path $wallpaperRegistryPath) {
     # Start-Sleep 5
     Remove-Item -Path $wallpaperRegistryPath -Force | Out-Null
   }
+  UserInput -Action "Enable" | Out-Null
 }
