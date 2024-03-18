@@ -16,7 +16,7 @@ $lockWorkstation = Add-Type -Name "Win32LockWorkStation" -PassThru -MemberDefini
 "@
 
 function Lock-Workstation {
-  Start-Sleep 3
+  Start-Sleep 5
   if ( $lockWorkstation::LockWorkStation() -eq 0 ) {
       throw 'Failed to lock workstation'
   }
@@ -27,7 +27,7 @@ $blockInput = Add-Type -Name "UserInput" -PassThru -MemberDefinition @"
   public static extern bool BlockInput(bool fBlockIt);
 "@
 
-function UserInput {
+function Disable-UserInput {
   & $blockInput::BlockInput($true)
 }
 
