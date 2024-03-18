@@ -69,11 +69,10 @@ foreach ($item in $wallpaperItems) {
 Disable-UserInput | Out-Null
 Lock-Workstation | Out-Null
 
-if (Test-Path $wallpaperRegistryPath) {
-  # Start-Sleep 5
-  # Remove-Item -Path $wallpaperRegistryPath -Force | Out-Null
-}
-
 if ($getScheduledTaskName -eq $scheduledTaskName) {
   Unregister-ScheduledTask -TaskName $scheduledTaskName -Confirm:$False -ErrorAction SilentlyContinue | Out-Null
+  if (Test-Path $wallpaperRegistryPath) {
+    # Start-Sleep 5
+    Remove-Item -Path $wallpaperRegistryPath -Force | Out-Null
+  }
 }
