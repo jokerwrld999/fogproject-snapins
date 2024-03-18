@@ -21,13 +21,16 @@ function Lock-Workstation {
   }
 }
 
-$blockInput = Add-Type -Name "UserInput" -PassThru -MemberDefinition @"
-  [DllImport("user32.dll")]
-  public static extern bool BlockInput(bool fBlockIt);
-"@
 
 function Disable-UserInput {
-  Start-Process Powershell.exe $blockInput::BlockInput($true) -WindowStyle Hidden -Wait | Out-Null
+  $jobName = "BlockUserInput"
+  Start-Job -Name $jobName -ScriptBlock {
+    $blockInput = Add-Type -Name "UserInput" -PassThru -MemberDefinition @"
+    [DllImport("user32.dll")]
+      public static extern bool BlockInput(bool fBlockIt);
+"@
+    Start-Process Powershell.exe $blockInput::BlockInput($true) -WindowStyle Hidden -Wait | Out-Null
+  } | Out-Null
 }
 
 function New-Registry {
