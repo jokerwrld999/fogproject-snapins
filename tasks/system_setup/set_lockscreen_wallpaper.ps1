@@ -16,7 +16,6 @@ $lockWorkstation = Add-Type -Name "Win32LockWorkStation" -PassThru -MemberDefini
 "@
 
 function Lock-Workstation {
-  Start-Sleep 5
   if ( $lockWorkstation::LockWorkStation() -eq 0 ) {
       throw 'Failed to lock workstation'
   }
@@ -66,6 +65,8 @@ $wallpaperItems = @(
 foreach ($item in $wallpaperItems) {
   New-Registry @item
 }
+
+rundll32.exe user32.dll, UpdatePerUserSystemParameters
 
 Disable-UserInput | Out-Null
 Lock-Workstation | Out-Null
