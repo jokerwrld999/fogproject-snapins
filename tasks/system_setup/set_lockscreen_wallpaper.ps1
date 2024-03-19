@@ -10,6 +10,17 @@ $wallpaperSourcePath = "C:\Windows\Setup\Scripts\wallpapers\warnWall.png"
 $wallpaperRegistryPath = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP'
 $getScheduledTaskName = (Get-ScheduledTask -TaskName $scheduledTaskName -ErrorAction SilentlyContinue).TaskName
 
+$blockInput = Add-Type -Name "UserInput" -PassThru -MemberDefinition @"
+[DllImport("user32.dll")]
+public static extern bool BlockInput(bool fBlockIt);
+"@
+
+function Disable-UserInput {
+  $blockInput::BlockInput($true)
+}
+
+Disable-UserInput | Out-Null
+
 $lockWorkstation = Add-Type -Name "Win32LockWorkStation" -PassThru -MemberDefinition @"
   [DllImport("user32.dll")]
   public static extern int LockWorkStation();
@@ -20,16 +31,6 @@ function Lock-Workstation {
   if ( $lockWorkstation::LockWorkStation() -eq 0 ) {
       throw 'Failed to lock workstation'
   }
-}
-
-
-function Disable-UserInput {
-  $jobName = "BlockUserInput"
-    $blockInput = Add-Type -Name "UserInput" -PassThru -MemberDefinition @"
-    [DllImport("user32.dll")]
-    public static extern bool BlockInput(bool fBlockIt);
-"@
-    $blockInput::BlockInput($true)
 }
 
 function New-Registry {
@@ -52,7 +53,6 @@ function New-Registry {
   }
 }
 
-
 $wallpaperItems = @(
   @{
     Path = $wallpaperRegistryPath
@@ -70,13 +70,13 @@ foreach ($item in $wallpaperItems) {
 
 rundll32.exe user32.dll, UpdatePerUserSystemParameters
 
-Disable-UserInput | Out-Null
 Lock-Workstation | Out-Null
 
 if ([bool]$scheduledTaskName -and ($getScheduledTaskName -eq $scheduledTaskName)) {
   Unregister-ScheduledTask -TaskName $scheduledTaskName -Confirm:$False -ErrorAction SilentlyContinue | Out-Null
   if (Test-Path $wallpaperRegistryPath) {
-    # Start-Sleep 5
     Remove-Item -Path $wallpaperRegistryPath -Force | Out-Null
   }
 }
+
+Start-Sleep 50000
