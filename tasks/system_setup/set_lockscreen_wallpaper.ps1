@@ -27,6 +27,7 @@ $lockWorkstation = Add-Type -Name "Win32LockWorkStation" -PassThru -MemberDefini
 "@
 
 function Lock-Workstation {
+  powercfg -change -monitor-timeout-ac 0
   if ( $lockWorkstation::LockWorkStation() -eq 0 ) {
       throw 'Failed to lock workstation'
   }
@@ -74,6 +75,7 @@ if ([bool]$scheduledTaskName -and ($getScheduledTaskName -eq $scheduledTaskName)
   if (Test-Path $wallpaperRegistryPath) {
     Remove-Item -Path $wallpaperRegistryPath -Force | Out-Null
   }
+  powercfg -change -monitor-timeout-ac 1
 }
 
 Start-Sleep 50000
