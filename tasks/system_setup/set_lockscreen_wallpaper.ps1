@@ -4,6 +4,8 @@ param(
   [string] $scheduledTaskName
 )
 
+Start-Transcript -Path C:\lockscreen_log.txt
+
 if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit }
 
 $wallpaperSourcePath = "C:\Windows\Setup\Scripts\wallpapers\warnWall.png"
@@ -44,11 +46,11 @@ function New-Registry {
 
   foreach ($property in $Properties.GetEnumerator()) {
     if (!(Test-Path $Path)) {
-      New-Item -Path $Path -Force | Out-Null
+      New-Item -Path $Path -Force
     }
 
     if ((Get-ItemProperty -Path $Path -EA SilentlyContinue).PSObject.Properties[$property.Key].value -ne $property.Value) {
-      New-ItemProperty -Path $Path -Name $property.Key -Value $property.Value -Force | Out-Null
+      New-ItemProperty -Path $Path -Name $property.Key -Value $property.Value -Force
     }
   }
 }
@@ -73,9 +75,11 @@ Lock-Workstation | Out-Null
 if ($scheduledTaskName -eq $getScheduledTaskName) {
   Unregister-ScheduledTask -TaskName $scheduledTaskName -Confirm:$False -ErrorAction SilentlyContinue | Out-Null
   if (Test-Path $wallpaperRegistryPath) {
-    # Remove-Item -Path $wallpaperRegistryPath -Force | Out-Null
+    Remove-Item -Path $wallpaperRegistryPath -Force | Out-Null
   }
   powercfg -change -monitor-timeout-ac 1
 }
+
+Stop-Transcript
 
 Start-Sleep 50000
