@@ -66,9 +66,8 @@ $wallpaperItems = @(
 
 foreach ($item in $wallpaperItems) {
   New-Registry @item
+  RUNDLL32.EXE USER32.DLL,UpdatePerUserSystemParameters 1, True
 }
-
-rundll32.exe user32.dll, UpdatePerUserSystemParameters
 
 Lock-Workstation | Out-Null
 
