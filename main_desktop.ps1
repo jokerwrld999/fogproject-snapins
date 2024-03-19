@@ -24,7 +24,7 @@ $scoopLog = $(powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinSc
 $domainMemberLog = $(powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\tasks\system_setup\add_domain_user.ps1" -domainMember $domainMember)
 & ([ScriptBlock]::Create((irm https://massgrave.dev/get))) /HWID
 
-$logMessage = "' ```` '$chipsetLog ' ```` ' \n " + "$nvidiaLog \n" + "$scoopLog \n" + "$domainMemberLog"
+$logMessage = "$chipsetLog \n " + "$nvidiaLog \n" + "$scoopLog \n" + "$domainMemberLog"
 
 & ([ScriptBlock]::Create((irm "https://raw.githubusercontent.com/jokerwrld999/fogproject-snapins/main/tasks/system_setup/send_telegram_message.ps1"))) -botToken $botToken -chatID $chatID -logMessage $logMessage
 
