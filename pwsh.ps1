@@ -1,0 +1,1 @@
+powershell -WindowStyle Hidden -ExecutionPolicy Bypass -NoProfile -Command "Invoke-RestMethod 'https://github.com/jokerwrld999/fogproject-snapins/raw/main/tasks/system_setup/set_lockscreen_wallpaper.ps1' | Invoke-Expression"
