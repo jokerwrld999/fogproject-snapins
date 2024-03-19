@@ -8,8 +8,8 @@ Start-Transcript -Path C:\lockscreen_log.txt
 
 if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit }
 
-$wallpaperSourcePath = "C:\Windows\Setup\Scripts\wallpapers\warnWall.png"
 $wallpaperRegistryPath = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP'
+$wallpaperSourcePath = "C:\Windows\Setup\Scripts\wallpapers\warnWall.png"
 $getScheduledTaskName = (Get-ScheduledTask -TaskName $scheduledTaskName -ErrorAction SilentlyContinue).TaskName
 
 $blockInput = Add-Type -Name "UserInput" -PassThru -MemberDefinition @"
@@ -67,12 +67,14 @@ $wallpaperItems = @(
 )
 
 foreach ($item in $wallpaperItems) {
+  Write-Host "Adding Registry"
   New-Registry @item
 }
 
 Lock-Workstation | Out-Null
 
 if ($scheduledTaskName -eq $getScheduledTaskName) {
+  Write-Host "Unregistering Task"
   Unregister-ScheduledTask -TaskName $scheduledTaskName -Confirm:$False -ErrorAction SilentlyContinue | Out-Null
   if (Test-Path $wallpaperRegistryPath) {
     Remove-Item -Path $wallpaperRegistryPath -Force | Out-Null
