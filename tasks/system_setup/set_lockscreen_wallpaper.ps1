@@ -60,8 +60,8 @@ $wallpaperItems = @(
     Path = $wallpaperRegistryPath
     Properties = @{
       LockScreenImagePath = $wallpaperSourcePath
-      LockScreenImageUrl = $wallpaperSourcePath
-      LockScreenImageStatus = 1
+      # LockScreenImageUrl = $wallpaperSourcePath
+      # LockScreenImageStatus = 1
     }
   }
 )
