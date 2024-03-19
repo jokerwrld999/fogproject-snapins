@@ -71,10 +71,12 @@ foreach ($item in $wallpaperItems) {
   New-Registry @item
 }
 
+Start-Sleep 10
+
 Lock-Workstation | Out-Null
 
 if ($scheduledTaskName -eq $getScheduledTaskName) {
-  Write-Host "Unregistering Task"
+  Write-Host "Unregistering Task......"
   Unregister-ScheduledTask -TaskName $scheduledTaskName -Confirm:$False -ErrorAction SilentlyContinue | Out-Null
   if (Test-Path $wallpaperRegistryPath) {
     Remove-Item -Path $wallpaperRegistryPath -Force | Out-Null

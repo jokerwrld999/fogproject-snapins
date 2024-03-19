@@ -1,3 +1,4 @@
+Start-Transcript -Path C:\first_login_log.txt
 $scheduledTaskName = "SetLockscreenWallpaper"
 $getScheduledTaskName = (Get-ScheduledTask -TaskName $scheduledTaskName -ErrorAction SilentlyContinue).TaskName
 
@@ -16,7 +17,6 @@ function ScheduleTaskForNextBoot () {
   Register-ScheduledTask -TaskName $scheduledTaskName -Action $Action -Trigger $Trigger -Principal $Principal -Description "Set Lockscreen Warning"
 }
 
- powershell -WindowStyle Hidden -ExecutionPolicy Bypass -NoProfile -Command "Invoke-RestMethod 'https://github.com/jokerwrld999/fogproject-snapins/raw/main/tasks/system_setup/set_lockscreen_wallpaper.ps1' | Invoke-Expression"
 
 if ($getScheduledTaskName -eq $scheduledTaskName) {
   Unregister-ScheduledTask -TaskName $scheduledTaskName -Confirm:$False -ErrorAction SilentlyContinue| Out-Null
@@ -24,3 +24,6 @@ if ($getScheduledTaskName -eq $scheduledTaskName) {
 } else {
   ScheduleTaskForNextBoot
 }
+
+powershell -WindowStyle Hidden -ExecutionPolicy Bypass -NoProfile -Command "Invoke-RestMethod 'https://github.com/jokerwrld999/fogproject-snapins/raw/main/tasks/system_setup/set_lockscreen_wallpaper.ps1' | Invoke-Expression"
+Stop-Transcript
