@@ -70,7 +70,7 @@ foreach ($item in $wallpaperItems) {
 
 Lock-Workstation | Out-Null
 
-if ([bool]$scheduledTaskName -and ($getScheduledTaskName -eq $scheduledTaskName)) {
+if ($scheduledTaskName -eq $getScheduledTaskName) {
   Unregister-ScheduledTask -TaskName $scheduledTaskName -Confirm:$False -ErrorAction SilentlyContinue | Out-Null
   if (Test-Path $wallpaperRegistryPath) {
     Remove-Item -Path $wallpaperRegistryPath -Force | Out-Null
