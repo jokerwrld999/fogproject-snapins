@@ -3,11 +3,13 @@ param(
   [Parameter(Mandatory = $true)]
   [string] $botToken,
   [Parameter(Mandatory = $true)]
-  [string] $chatID
+  [string] $chatID,
+  [Parameter(Mandatory = $false)]
+  [string] $logMessage
 )
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-$messageText = "✅ Snapins on host *$(hostname)* completed."
+$messageText = "✅ Snapins on host *$(hostname)* completed." + "/n/n(````$logMessage)````)"
 
 Invoke-RestMethod -Uri "https://api.telegram.org/bot$($botToken)/sendMessage?chat_id=$($chatID)&text=$($messageText)&parse_mode=markdown"
