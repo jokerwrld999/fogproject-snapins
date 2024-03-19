@@ -73,7 +73,7 @@ Lock-Workstation | Out-Null
 if ($scheduledTaskName -eq $getScheduledTaskName) {
   Unregister-ScheduledTask -TaskName $scheduledTaskName -Confirm:$False -ErrorAction SilentlyContinue | Out-Null
   if (Test-Path $wallpaperRegistryPath) {
-    Remove-Item -Path $wallpaperRegistryPath -Force | Out-Null
+    # Remove-Item -Path $wallpaperRegistryPath -Force | Out-Null
   }
   powercfg -change -monitor-timeout-ac 1
 }
