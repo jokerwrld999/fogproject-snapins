@@ -27,7 +27,6 @@ $lockWorkstation = Add-Type -Name "Win32LockWorkStation" -PassThru -MemberDefini
 "@
 
 function Lock-Workstation {
-  Start-Sleep 10
   if ( $lockWorkstation::LockWorkStation() -eq 0 ) {
       throw 'Failed to lock workstation'
   }
