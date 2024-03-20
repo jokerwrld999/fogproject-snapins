@@ -24,7 +24,7 @@ $drivers = @(
     driverRemote = "$networkSharePath\$gitRepoPath\files\desktop_drivers\IOserial.zip";
     sourceUnzipPath = "$driverTempPath\IOserial.zip";
     destinationUnzipPath = $driverTempPath;
-    driverExe = "Chipset\AsusSetup.exe";
+    driverExe = "IOserial\AsusSetup.exe";
     installSwitches = "-s -norestart"
   }
 )
