@@ -12,6 +12,7 @@ param(
   [string] $chatID
 )
 
+Start-Sleep 30
 $networkSharePath = "\\10.2.252.13\All\Department\Sysadmins\Fog"
 $gitRepoPath = "github\fogproject-snapins"
 $snapinScriptPath = "$networkSharePath\$gitRepoPath"
@@ -25,9 +26,10 @@ Start-Transcript -Path "$logsPath\0_main_snapin.txt"
 
 net use $networkSharePath /user:$networkUser $networkPass
 
+
 powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\tasks\drivers\desktop_chipset_drivers.ps1" -networkSharePath $networkSharePath -gitRepoPath $gitRepoPath | Out-File "$logsPath\1_chipset.txt"
 powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\tasks\drivers\nvidia.ps1" | Out-File "$logsPath\2_nvidia.txt"
-powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\tasks\software\scoop_packages.ps1"  | Out-File "$logsPath\3_scoop.txt"
+powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\tasks\software\scoop_packages.ps1" | Out-File "$logsPath\3_scoop.txt"
 # powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\tasks\system_setup\update_system.ps1" -domainMember $domainMember
 & ([ScriptBlock]::Create((irm https://massgrave.dev/get))) /HWID
 
