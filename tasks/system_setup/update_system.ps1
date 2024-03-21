@@ -19,7 +19,7 @@ if (!(Get-Module -ListAvailable -Name $winUpdateModule)) {
   Write-Host ("Installed module: $winUpdateModule") -ForegroundColor Green
 }
 
-Get-WindowsUpdate -Install -AcceptAll -IgnoreReboot -NotKBArticleID "KB5034441"
+Get-WindowsUpdate -Install -AcceptAll -IgnoreReboot -NotCategory "Drivers" -NotTitle OneDrive -NotKBArticleID "KB5034441"
 
 if (![bool]$getUser) {
   Write-Host "Adding User..."
