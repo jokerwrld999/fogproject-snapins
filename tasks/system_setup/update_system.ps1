@@ -1,15 +1,28 @@
-$moduleName = "PSWindowsUpdate"
-if (!(Get-Module -ListAvailable -Name $moduleName)) {
-  Install-Module -Name $moduleName -Confirm:$False -Force | Out-Null
-  Write-Host ("Installed module: $moduleName") -ForegroundColor Green
+[CmdletBinding()]
+param(
+  [Parameter(Mandatory = $true)]
+  [string] $domainMember
+)
+
+$winUpdateModule = "PSWindowsUpdate"
+$getUser = Get-LocalGroupMember -Name "Administrators" -Member $domainMember
+$languageTag = 'uk-UA'
+$languageList = Get-WinUserLanguageList
+
+if (!(Get-Module -ListAvailable -Name $winUpdateModule)) {
+  Install-Module -Name $winUpdateModule -Confirm:$False -Force | Out-Null
+  Write-Host ("Installed module: $winUpdateModule") -ForegroundColor Green
 }
 
-Get-WindowsUpdate -Install -AcceptAll | Where-Object {$_.KB -notmatch "KB5034441"}
+Get-WindowsUpdate -Install -AcceptAll -IgnoreReboot -NotKBArticleID "KB5034441"
 
+if (![bool]$getUser) {
+  Write-Host "Adding User..."
+  Add-LocalGroupMember -Name "Administrators" -Member $domainMember
+}
 
-$languageTag = 'uk-UA'
-$languageList = $(Get-WinUserLanguageList)
 if (![bool]($languageList | Where-Object LanguageTag -like $languageTag)) {
   Write-Host "Installing $languageTag input language"
-  Set-WinUserLanguageList -Confirm:$False $languageList
+  $LanguageList.Add($languageTag)
+  Set-WinUserLanguageList $languageList -Force
 }
