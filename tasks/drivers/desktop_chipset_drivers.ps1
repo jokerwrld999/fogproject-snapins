@@ -16,7 +16,7 @@ function Test-ProblemDriver {
       [string]$hardwareID
   )
   $deviceStatus = pnputil /enum-devices /problem | Select-String $hardwareID
-  return -not $deviceStatus
+  return $deviceStatus
 }
 
 if (!(Test-Path -Path $driverTempPath)) {
