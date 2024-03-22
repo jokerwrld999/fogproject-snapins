@@ -11,6 +11,14 @@ $7zipRemote = "https://www.7-zip.org/a/7z2301-x64.exe"
 $7zipSrc = "$driverTempPath\7zip.exe"
 $7zipExe = "$env:programfiles\7-Zip\7z.exe"
 
+function Test-ProblemDriver {
+  param (
+      [string]$hardwareID
+  )
+  $deviceStatus = pnputil /enum-devices /problem | Select-String $hardwareID
+  return -not $deviceStatus
+}
+
 if (!(Test-Path -Path $driverTempPath)) {
   New-Item -Type Directory -Path $driverTempPath | Out-Null
 }
@@ -19,14 +27,6 @@ if (!(Test-Path -Path $7zipExe) -and ![bool](Get-Command 7z -ErrorAction Silentl
   Write-Host "####### Installing 7zip... #######" -ForegroundColor Blue
   (New-Object System.Net.WebClient).DownloadFile($7zipRemote,$7zipSrc)
   Start-Process -FilePath $7zipSrc -ArgumentList "/S" -Wait
-}
-
-function Test-ProblemDriver {
-  param (
-      [string]$hardwareID
-  )
-  $deviceStatus = pnputil /enum-devices /problem | Select-String $hardwareID
-  return -not $deviceStatus
 }
 
 $drivers = @(
