@@ -1,17 +1,3 @@
-# Checking latest driver version. Thanks to "https://github.com/lord-carlos/nvidia-update"
-$uri = 'https://gfwsl.geforce.com/services_toolkit/services/com/nvidia/services/AjaxDriverService.php' +
-'?func=DriverManualLookup' +
-'&psid=120' + # Geforce RTX 30 Series
-'&pfid=929' +  # RTX 3080
-'&osID=57' + # Windows 10 64bit
-'&languageCode=1033' + # en-US; seems to be "Windows Locale ID"[1] in decimal
-'&isWHQL=1' + # WHQL certified
-'&dch=1' + # DCH drivers (the new standard)
-'&sort1=0' + # sort: most recent first(?)
-'&numberOfResults=1' # single, most recent result is enough
-$response = Invoke-WebRequest -Uri $uri -Method GET -UseBasicParsing
-$payload = $response.Content | ConvertFrom-Json
-$latestNvidiaVersion =  $payload.IDS[0].downloadInfo.Version
 $driverTempPath = "C:\NvidiaTemp"
 $nvidiaDriverPath = "$driverTempPath\driver.exe"
 $nvidiaRemoteUrl = "https://uk.download.nvidia.com/Windows/$latestNvidiaVersion/$latestNvidiaVersion-desktop-win10-win11-64bit-international-dch-whql.exe"
@@ -21,11 +7,43 @@ $7zipRemote = "https://www.7-zip.org/a/7z2301-x64.exe"
 $7zipSrc = "$driverTempPath\7zip.exe"
 $7zipExe = "$env:programfiles\7-Zip\7z.exe"
 
-if ([bool]((Get-WmiObject win32_VideoController).PNPDeviceID | Select-String "VEN_10DE")) {
-  $getNvidiaVersion = (Get-WmiObject Win32_PnPSignedDriver | Where-Object {$_.devicename -like "*nvidia*" -and $_.devicename -notlike "*audio*"}).DriverVersion | Select-Object -Last 1 | Out-String
-  $currentNvidiaVersion = ($($getNvidiaVersion) | Select-String -Pattern '.{7}$').Matches.Value.Replace(".","").Insert(3,'.').Trim()
+function Get-LatestNvidiaDriverVersion {
+  # Checking latest driver version. Thanks to "https://github.com/lord-carlos/nvidia-update"
+  $uri = 'https://gfwsl.geforce.com/services_toolkit/services/com/nvidia/services/AjaxDriverService.php' +
+  '?func=DriverManualLookup' +
+  '&psid=120' + # Geforce RTX 30 Series
+  '&pfid=929' +  # RTX 3080
+  '&osID=57' + # Windows 10 64bit
+  '&languageCode=1033' + # en-US; seems to be "Windows Locale ID"[1] in decimal
+  '&isWHQL=1' + # WHQL certified
+  '&dch=1' + # DCH drivers (the new standard)
+  '&sort1=0' + # sort: most recent first(?)
+  '&numberOfResults=1' # single, most recent result is enough
+  $response = Invoke-WebRequest -Uri $uri -Method GET -UseBasicParsing
+  $payload = $response.Content | ConvertFrom-Json
+  return $payload.IDS[0].downloadInfo.Version
+}
 
-  if ($currentNvidiaVersion -lt $latestNvidiaVersion){
+function Get-CurrentNvidiaDriverVersion {
+  $getNvidiaVersion = ((Get-WmiObject Win32_PnPSignedDriver | Where-Object {  $_.DeviceClass -eq 'Display' }).DriverVersion | Out-String).Trim()
+  if ($getNvidiaVersion.Length -gt 12 ) {
+    return ($getNvidiaVersion | Select-String -Pattern '.{7}$').Matches.Value.Replace(".","").Insert(3,'.').Trim()
+  } else {
+    return ($getNvidiaVersion | Select-String -Pattern '.{6}$').Matches.Value.Replace(".","").Insert(3,'.').Trim()
+  }
+}
+
+if (!(Test-Path -Path $7zipExe) -and ![bool](Get-Command 7z -ErrorAction SilentlyContinue)) {
+    Write-Host "####### Installing 7zip... #######" -ForegroundColor Blue
+    (New-Object System.Net.WebClient).DownloadFile($7zipRemote,$7zipSrc)
+    Start-Process -FilePath $7zipSrc -ArgumentList "/S" -Wait
+}
+
+if ( [bool]((Get-WmiObject win32_VideoController).PNPDeviceID | Select-String "VEN_10DE") ) {
+  $latestNvidiaVersion = Get-LatestNvidiaDriverVersion
+  $currentNvidiaVersion = Get-CurrentNvidiaDriverVersion
+
+  if ($latestNvidiaVersion -gt $currentNvidiaVersion){
     if (!(Test-Path -Path $driverTempPath)) {
       New-Item -Type Directory -Path $driverTempPath | Out-Null
     }
@@ -36,11 +54,6 @@ if ([bool]((Get-WmiObject win32_VideoController).PNPDeviceID | Select-String "VE
     }
 
     if (!(Test-Path -Path $sourceUnzipPath)) {
-      if (!(Test-Path -Path $7zipExe) -and ![bool](Get-Command 7z -ErrorAction SilentlyContinue)) {
-          Write-Host "####### Installing 7zip... #######" -ForegroundColor Blue
-          (New-Object System.Net.WebClient).DownloadFile($7zipRemote,$7zipSrc)
-          Start-Process -FilePath $7zipSrc -ArgumentList "/S" -Wait
-      }
 
       Write-Host "####### Extracting Nvidia Driver... #######" -ForegroundColor Blue
       if (Test-Path -Path $7zipExe){
