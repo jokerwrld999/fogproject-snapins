@@ -10,24 +10,6 @@ $driverTempPath = "C:\DesktopTemp"
 $7zipRemote = "https://www.7-zip.org/a/7z2301-x64.exe"
 $7zipSrc = "$driverTempPath\7zip.exe"
 $7zipExe = "$env:programfiles\7-Zip\7z.exe"
-$drivers = @(
-  @{ Name = "Intel Chipset";
-    driverID = "$(pnputil /enum-devices /problem | Select-String 'VEN_8086')";
-    driverRemote = "$networkSharePath\$gitRepoPath\files\desktop_drivers\Chipset.zip";
-    sourceUnzipPath = "$driverTempPath\Chipset.zip";
-    destinationUnzipPath = $driverTempPath;
-    driverExe = "Chipset\SetupChipset.exe";
-    installSwitches = "-s -norestart"
-  },
-  @{ Name = "Intel Serial IO";
-    driverID = "$(pnputil /enum-devices /problem | Select-String 'VEN_8086&DEV_43E9')";
-    driverRemote = "$networkSharePath\$gitRepoPath\files\desktop_drivers\IOserial.zip";
-    sourceUnzipPath = "$driverTempPath\IOserial.zip";
-    destinationUnzipPath = $driverTempPath;
-    driverExe = "IOserial\SetupSerialIO.exe";
-    installSwitches = "-s"
-  }
-)
 
 if (!(Test-Path -Path $driverTempPath)) {
   New-Item -Type Directory -Path $driverTempPath | Out-Null
@@ -39,8 +21,35 @@ if (!(Test-Path -Path $7zipExe) -and ![bool](Get-Command 7z -ErrorAction Silentl
   Start-Process -FilePath $7zipSrc -ArgumentList "/S" -Wait
 }
 
+function Test-ProblemDriver {
+  param (
+      [string]$hardwareID
+  )
+  $deviceStatus = pnputil /enum-devices /problem | Select-String $hardwareID
+  return -not $deviceStatus
+}
+
+$drivers = @(
+  @{ Name = "Intel Chipset";
+    hardwareID = 'VEN_8086';
+    driverRemote = "$networkSharePath\$gitRepoPath\files\desktop_drivers\Chipset.zip";
+    sourceUnzipPath = "$driverTempPath\Chipset.zip";
+    destinationUnzipPath = $driverTempPath;
+    driverExe = "Chipset\SetupChipset.exe";
+    installSwitches = "-s -norestart"
+  },
+  @{ Name = "Intel Serial IO";
+    hardwareID = 'VEN_8086&DEV_43E9';
+    driverRemote = "$networkSharePath\$gitRepoPath\files\desktop_drivers\IOserial.zip";
+    sourceUnzipPath = "$driverTempPath\IOserial.zip";
+    destinationUnzipPath = $driverTempPath;
+    driverExe = "IOserial\SetupSerialIO.exe";
+    installSwitches = "-s"
+  }
+)
+
 foreach ($driver in $drivers) {
-  if ([bool]$driver.driverID) {
+  if (Test-ProblemDriver -hardwareID $driver.hardwareID) {
     if (!(Test-Path -Path "$($driver.destinationUnzipPath)\$($driver.driverExe)")) {
       Write-Host "####### Downloading Desktop $($driver.Name) Driver... #######" -ForegroundColor Blue
       (New-Object System.Net.WebClient).DownloadFile($driver.driverRemote,$driver.sourceUnzipPath)
