@@ -54,7 +54,6 @@ if ( [bool](pnputil /enum-devices | Select-string "VEN_10DE") ) {
     }
 
     if (!(Test-Path -Path $sourceUnzipPath)) {
-
       Write-Host "####### Extracting Nvidia Driver... #######" -ForegroundColor Blue
       if (Test-Path -Path $7zipExe){
         Start-Process $7zipExe -ArgumentList "x $nvidiaDriverPath `"-o$($destinationUnzipPath)`" -y -bso0 -bd" -NoNewWindow -Wait
