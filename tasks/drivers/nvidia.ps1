@@ -1,12 +1,3 @@
-$driverTempPath = "C:\NvidiaTemp"
-$nvidiaDriverPath = "$driverTempPath\driver.exe"
-$nvidiaRemoteUrl = "https://uk.download.nvidia.com/Windows/$latestNvidiaVersion/$latestNvidiaVersion-desktop-win10-win11-64bit-international-dch-whql.exe"
-$destinationUnzipPath = "$driverTempPath\$latestNvidiaVersion-Driver"
-$sourceUnzipPath = "$destinationUnzipPath\setup.exe"
-$7zipRemote = "https://www.7-zip.org/a/7z2301-x64.exe"
-$7zipSrc = "$driverTempPath\7zip.exe"
-$7zipExe = "$env:programfiles\7-Zip\7z.exe"
-
 function Get-LatestNvidiaDriverVersion {
   # Checking latest driver version. Thanks to "https://github.com/lord-carlos/nvidia-update"
   $uri = 'https://gfwsl.geforce.com/services_toolkit/services/com/nvidia/services/AjaxDriverService.php' +
@@ -24,8 +15,18 @@ function Get-LatestNvidiaDriverVersion {
   return $payload.IDS[0].downloadInfo.Version
 }
 
+$latestNvidiaVersion = Get-LatestNvidiaDriverVersion
+$driverTempPath = "C:\NvidiaTemp"
+$nvidiaDriverPath = "$driverTempPath\driver.exe"
+$nvidiaRemoteUrl = "https://uk.download.nvidia.com/Windows/$latestNvidiaVersion/$latestNvidiaVersion-desktop-win10-win11-64bit-international-dch-whql.exe"
+$destinationUnzipPath = "$driverTempPath\$latestNvidiaVersion-Driver"
+$sourceUnzipPath = "$destinationUnzipPath\setup.exe"
+$7zipRemote = "https://www.7-zip.org/a/7z2301-x64.exe"
+$7zipSrc = "$driverTempPath\7zip.exe"
+$7zipExe = "$env:programfiles\7-Zip\7z.exe"
+
 function Get-CurrentNvidiaDriverVersion {
-  $getNvidiaVersion = ((Get-WmiObject Win32_PnPSignedDriver | Where-Object {  $_.DeviceClass -eq 'Display' }).DriverVersion | Out-String).Trim()
+  $getNvidiaVersion = ((Get-WmiObject Win32_VideoController).DriverVersion | Out-String).Trim()
   if ($getNvidiaVersion.Length -gt 12 ) {
     return ($getNvidiaVersion | Select-String -Pattern '.{7}$').Matches.Value.Replace(".","").Insert(3,'.').Trim()
   } else {
@@ -39,11 +40,10 @@ if (!(Test-Path -Path $7zipExe) -and ![bool](Get-Command 7z -ErrorAction Silentl
     Start-Process -FilePath $7zipSrc -ArgumentList "/S" -Wait
 }
 
-if ( [bool]((Get-WmiObject win32_VideoController).PNPDeviceID | Select-String "VEN_10DE") ) {
-  $latestNvidiaVersion = Get-LatestNvidiaDriverVersion
+if ( [bool](pnputil /enum-devices | Select-string "VEN_10DE") ) {
   $currentNvidiaVersion = Get-CurrentNvidiaDriverVersion
 
-  if ($latestNvidiaVersion -gt $currentNvidiaVersion){
+  if ($currentNvidiaVersion -lt $latestNvidiaVersion){
     if (!(Test-Path -Path $driverTempPath)) {
       New-Item -Type Directory -Path $driverTempPath | Out-Null
     }
