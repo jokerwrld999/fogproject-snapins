@@ -5,9 +5,7 @@ param(
 )
 
 $winUpdateModule = "PSWindowsUpdate"
-$getUser = Get-LocalGroupMember -Name "Administrators" -Member $domainMember
 $languageTag = 'uk-UA'
-$languageList = Get-WinUserLanguageList
 
 if (!(Get-PackageProvider | Select-Object Name | Select-String "NuGet")) {
   Write-Host "Installing NuGet Provider..." -ForegroundColor Blue
@@ -19,15 +17,21 @@ if (!(Get-Module -ListAvailable -Name $winUpdateModule)) {
   Write-Host ("Installed module: $winUpdateModule") -ForegroundColor Green
 }
 
-Get-WindowsUpdate -Install -AcceptAll -IgnoreReboot -NotCategory "Drivers" -NotTitle OneDrive -NotKBArticleID "KB5034441"
+Install-WindowsUpdate -NotCategory "Drivers" -AcceptAll -IgnoreReboot
 
-if (![bool]$getUser) {
-  Write-Host "Adding User..."
-  Add-LocalGroupMember -Name "Administrators" -Member $domainMember -ErrorAction SilentlyContinue
+if ((Get-WindowsCapability -Online -Name NetFx3~~~~).State -ne "Installed") {
+  Write-Host "Installing .NET Framework 3.5..." -ForegroundColor Blue
+  Enable-WindowsOptionalFeature -Online -FeatureName "NetFx3"
 }
 
-if (![bool]($languageList | Where-Object LanguageTag -like $languageTag)) {
-  Write-Host "Installing $languageTag input language"
-  $LanguageList.Add($languageTag)
+if (-not (Get-LocalGroupMember -Name "Administrators" -Member $domainMember -ErrorAction SilentlyContinue)) {
+    Write-Host "Adding User..." -ForegroundColor Blue
+    Add-LocalGroupMember -Name "Administrators" -Member $domainMember -ErrorAction SilentlyContinue
+}
+
+if (!((Get-WinUserLanguageList).LanguageTag -contains 'uk')) {
+  Write-Host "Installing $languageTag input language..." -ForegroundColor Blue
+  $languageList = Get-WinUserLanguageList
+  $languageList.Add($languageTag)
   Set-WinUserLanguageList $languageList -Force
 }
