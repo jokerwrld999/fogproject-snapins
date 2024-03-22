@@ -12,11 +12,12 @@ param(
   [string] $chatID
 )
 
-Start-Sleep 30
 $networkSharePath = "\\10.2.252.13\All\Department\Sysadmins\Fog"
 $gitRepoPath = "github\fogproject-snapins"
 $snapinScriptPath = "$networkSharePath\$gitRepoPath"
 $logsPath = "C:\Windows\Setup\Logs"
+
+Start-Sleep 30
 
 if (!(Test-Path -Path $logsPath)) {
   New-Item -Type Directory -Path $logsPath -Force | Out-Null
@@ -26,6 +27,7 @@ Start-Transcript -Path "$logsPath\0_main_snapin.txt"
 
 net use $networkSharePath /user:$networkUser $networkPass
 
+Start-Sleep 30
 
 powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\tasks\drivers\desktop_chipset_drivers.ps1" -networkSharePath $networkSharePath -gitRepoPath $gitRepoPath | Out-File "$logsPath\1_chipset.txt"
 powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\tasks\drivers\nvidia.ps1" | Out-File "$logsPath\2_nvidia.txt"
