@@ -21,7 +21,7 @@ Install-WindowsUpdate -NotCategory "Drivers" -AcceptAll -IgnoreReboot
 
 if ((Get-WindowsCapability -Online -Name NetFx3~~~~).State -ne "Installed") {
   Write-Host "Installing .NET Framework 3.5..." -ForegroundColor Blue
-  Enable-WindowsOptionalFeature -Online -FeatureName "NetFx3"
+  # Enable-WindowsOptionalFeature -Online -FeatureName "NetFx3"
 }
 
 if (-not (Get-LocalGroupMember -Name "Administrators" -Member $domainMember -ErrorAction SilentlyContinue)) {
