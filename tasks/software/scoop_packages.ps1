@@ -1,8 +1,9 @@
 #Requires -RunAsAdministrator
 
-$ExecutionPolicy = Get-ExecutionPolicy -Scope LocalMachine
-if ($ExecutionPolicy -ne "RemoteSigned") {
-  Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine -Force
+$getExecutionPolicy = Get-ExecutionPolicy -Scope LocalMachine
+$executionPolicyName = "RemoteSigned"
+if ($getExecutionPolicy -ne $executionPolicyName) {
+  Set-ExecutionPolicy -ExecutionPolicy $executionPolicyName -Scope LocalMachine -Force *>$null
 }
 
 if (![bool](Get-Command -Name 'scoop' -ErrorAction SilentlyContinue)) {
