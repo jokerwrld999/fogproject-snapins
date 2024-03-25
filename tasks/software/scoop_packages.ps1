@@ -3,7 +3,8 @@
 $getExecutionPolicy = Get-ExecutionPolicy -Scope LocalMachine
 $executionPolicyName = "RemoteSigned"
 if ($getExecutionPolicy -ne $executionPolicyName) {
-  Set-ExecutionPolicy -ExecutionPolicy $executionPolicyName -Scope LocalMachine -Force *>$null
+  $ErrorActionPreference = 'SilentlyContinue'
+  Set-ExecutionPolicy -ExecutionPolicy $executionPolicyName -Scope LocalMachine -Force
 }
 
 if (![bool](Get-Command -Name 'scoop' -ErrorAction SilentlyContinue)) {
