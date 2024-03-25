@@ -33,6 +33,7 @@ if (!(Test-Path -Path $7zipExe) -and ![bool](Get-Command 7z -ErrorAction Silentl
 
 $drivers = @(
   @{ Name = "Intel Rapid Storage Technology";
+    hardwareID = ' ';
     driverRemote = "$networkSharePath\$gitRepoPath\files\hp_z640_drivers\IntelRST(sp96420).exe";
     sourceUnzipPath = "$driverTempPath\rst.exe";
     destinationUnzipPath = "$driverTempPath\RST";
