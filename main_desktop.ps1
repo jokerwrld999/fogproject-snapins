@@ -27,12 +27,12 @@ Start-Transcript -Path "$logsPath\0_main_snapin.txt"
 
 net use $networkSharePath /user:$networkUser $networkPass
 
-Start-Sleep 15
+Start-Sleep 30
 
 powercfg -change -monitor-timeout-ac 0
 
 powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\tasks\drivers\desktop_chipset_drivers.ps1" -networkSharePath $networkSharePath -gitRepoPath $gitRepoPath | Out-File "$logsPath\1_chipset.txt"
-Start-Sleep 10
+Start-Sleep 30
 
 powershell.exe -ExecutionPolicy Bypass -NoProfile -File "$snapinScriptPath\tasks\drivers\nvidia.ps1" | Out-File "$logsPath\2_nvidia.txt"
 Start-Sleep 10
