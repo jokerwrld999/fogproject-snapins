@@ -47,7 +47,8 @@ $applications = @(
   @{ Name = "Foxit Reader"; Id = "extras/foxit-reader" },
   @{ Name = "Google Chrome"; Id = "extras/googlechrome" },
   @{ Name = "Slack"; Id = "extras/slack" },
-  @{ Name = "Notepad++"; Id = "extras/notepadplusplus" }
+  @{ Name = "Notepad++"; Id = "extras/notepadplusplus" },
+  @{ Name = "UltraVNC"; Id = "extras/ultravnc" }
 )
 
 foreach ($app in $applications) {
