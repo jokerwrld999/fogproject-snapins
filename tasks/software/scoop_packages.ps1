@@ -57,3 +57,4 @@ foreach ($app in $applications) {
 }
 
 scoop cleanup * *> $null
+scoop cache rm * *> $null
